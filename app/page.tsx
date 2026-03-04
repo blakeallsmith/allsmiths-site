@@ -3,9 +3,10 @@
 import { useState, useRef, FormEvent } from 'react';
 
 const KIT_API_KEY = 'kit_008440e25ca31fb16eaae4f5ba245d52';
+const KIT_FORM_ID = '9162242';
 
 async function subscribeToKit(email: string) {
-  const response = await fetch('https://api.kit.com/v4/subscribers', {
+  const response = await fetch(`https://api.kit.com/v4/forms/${KIT_FORM_ID}/subscribers`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -13,7 +14,6 @@ async function subscribeToKit(email: string) {
     },
     body: JSON.stringify({
       email_address: email,
-      state: 'active',
       fields: { Source: 'Meta LP' },
     }),
   });
