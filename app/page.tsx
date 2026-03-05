@@ -1,57 +1,69 @@
 'use client';
 
-import Script from 'next/script';
+import { useState, useRef, FormEvent } from 'react';
 
-function KitForm({ id }: { id: string }) {
+function SignupForm({ id }: { id: string }) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    const email = emailRef.current?.value.trim();
+    if (!email) return;
+
+    setStatus('loading');
+    setMessage('');
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+      }
+
+      // Fire Meta Pixel Lead event
+      if (typeof (window as any).fbq === 'function') {
+        (window as any).fbq('track', 'Lead');
+      }
+
+      setStatus('success');
+      setMessage("You're in! Check your email to get your dashboard.");
+    } catch (err: any) {
+      setStatus('error');
+      setMessage(err.message || 'Something went wrong. Please try again.');
+    }
+  }
+
+  if (status === 'success') {
+    return (
+      <div className="form-success">
+        {message}
+      </div>
+    );
+  }
+
   return (
-    <div className="kit-form-wrapper" id={id}>
-      <Script
-        src="https://f.convertkit.com/ckjs/ck.5.js"
-        strategy="lazyOnload"
-        onLoad={() => {
-          // Fire Meta Pixel Lead event when Kit form is submitted
-          if (typeof document !== 'undefined') {
-            document.addEventListener('submit', (e) => {
-              const form = e.target as HTMLElement;
-              if (form && form.closest('[data-uid="228219bc9e"]')) {
-                if (typeof (window as any).fbq === 'function') {
-                  (window as any).fbq('track', 'Lead');
-                }
-              }
-            });
-          }
-        }}
-      />
-      <form
-        action="https://app.kit.com/forms/9162242/subscriptions"
-        className="seva-form formkit-form"
-        method="post"
-        data-sv-form="9162242"
-        data-uid="228219bc9e"
-        data-format="inline"
-        data-version="5"
-        data-options='{"settings":{"after_subscribe":{"action":"message","success_message":"Success! Now check your email to get your dashboard!","redirect_url":""},"analytics":{"google":null,"fathom":null,"facebook":null,"segment":null,"pinterest":null,"sparkloop":null,"googletagmanager":null},"modal":{"trigger":"timer","scroll_percentage":null,"timer":5,"devices":"all","show_once_every":15},"powered_by":{"show":false,"url":""},"recaptcha":{"enabled":false},"return_visitor":{"action":"show","custom_content":""},"slide_in":{"display_in":"bottom_right","trigger":"timer","scroll_percentage":null,"timer":5,"devices":"all","show_once_every":15},"sticky_bar":{"display_in":"top","trigger":"timer","scroll_percentage":null,"timer":5,"devices":"all","show_once_every":15}},"version":"5"}'
-        min-width="400 500 600 700 800"
-      >
-        <div data-style="clean">
-          <ul className="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul>
-          <div data-element="fields" data-stacked="false" className="seva-fields formkit-fields">
-            <div className="formkit-field">
-              <input
-                className="formkit-input"
-                name="email_address"
-                aria-label="Email Address"
-                placeholder="Enter your email"
-                required
-                type="email"
-              />
-            </div>
-            <button data-element="submit" className="formkit-submit">
-              <div className="formkit-spinner"><div></div><div></div><div></div></div>
-              <span>Get the Free Dashboard &rarr;</span>
-            </button>
-          </div>
-        </div>
+    <div>
+      {status === 'error' && (
+        <div className="form-error">{message}</div>
+      )}
+      <form className="signup-form" id={id} onSubmit={handleSubmit}>
+        <input
+          type="email"
+          ref={emailRef}
+          placeholder="Enter your email"
+          required
+          disabled={status === 'loading'}
+        />
+        <button type="submit" className="cta-btn" disabled={status === 'loading'}>
+          {status === 'loading' ? 'Sending...' : 'Get the Free Dashboard \u2192'}
+        </button>
       </form>
     </div>
   );
@@ -91,7 +103,7 @@ export default function Home() {
                 <span>Early access to new tools, e-courses, and my upcoming book</span>
               </li>
             </ul>
-            <KitForm id="hero-form" />
+            <SignupForm id="hero-form" />
             <p className="form-note">Join 10,083+ families. Unsubscribe anytime. No spam, ever.</p>
           </div>
           <div className="hero-right">
@@ -205,7 +217,7 @@ export default function Home() {
         <div className="bottom-cta-inner">
           <h2>Your family deserves a system.<br />This one&apos;s free.</h2>
           <p>Drop your email. Get the dashboard. Start this week.</p>
-          <KitForm id="bottom-form" />
+          <SignupForm id="bottom-form" />
           <p className="form-note">No credit card. No spam. Just a really useful spreadsheet.</p>
         </div>
       </section>
