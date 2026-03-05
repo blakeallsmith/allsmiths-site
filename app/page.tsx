@@ -1,76 +1,29 @@
 'use client';
 
-import { useState, useRef, FormEvent } from 'react';
+import Script from 'next/script';
 
-const KIT_API_KEY = 'kit_008440e25ca31fb16eaae4f5ba245d52';
-const KIT_FORM_ID = '9162242';
-
-async function subscribeToKit(email: string) {
-  const response = await fetch(`https://api.kit.com/v4/forms/${KIT_FORM_ID}/subscribers`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Kit-Api-Key': KIT_API_KEY,
-    },
-    body: JSON.stringify({
-      email_address: email,
-      fields: { Source: 'Meta LP' },
-    }),
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error((err as any).message || 'Something went wrong. Please try again.');
-  }
-
-  return response.json();
-}
-
-function SignupForm({ id, dark = false }: { id: string; dark?: boolean }) {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-  const emailRef = useRef<HTMLInputElement>(null);
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const email = emailRef.current?.value.trim();
-    if (!email) return;
-
-    setStatus('loading');
-    setMessage('');
-
-    try {
-      await subscribeToKit(email);
-      if (typeof (window as any).fbq === 'function') {
-        (window as any).fbq('track', 'Lead');
-      }
-      setStatus('success');
-      setMessage("You're in. Check your email for the dashboard link.");
-    } catch (err: any) {
-      setStatus('error');
-      setMessage(err.message || 'Something went wrong. Please try again.');
-    }
-  }
-
+function KitForm({ id }: { id: string }) {
   return (
-    <>
-      {message && (
-        <div className={`form-message ${status} visible`}>{message}</div>
-      )}
-      {status !== 'success' && (
-        <form className="signup-form" id={id} onSubmit={handleSubmit}>
-          <input
-            type="email"
-            ref={emailRef}
-            placeholder="Enter your email"
-            required
-          />
-          <button type="submit" className="cta-btn" disabled={status === 'loading'}>
-            {status === 'loading' ? 'Sending...' : 'Get the Free Dashboard \u2192'}
-          </button>
-        </form>
-      )}
-    </>
+    <div className="kit-form-wrapper" id={id}>
+      <Script
+        src="https://blake-allsmith.kit.com/fdb4947860/index.js"
+        strategy="lazyOnload"
+        data-uid="fdb4947860"
+        onLoad={() => {
+          // Fire Meta Pixel Lead event when Kit form is submitted
+          if (typeof document !== 'undefined') {
+            document.addEventListener('submit', (e) => {
+              const form = e.target as HTMLElement;
+              if (form && form.closest('[data-uid="fdb4947860"]')) {
+                if (typeof (window as any).fbq === 'function') {
+                  (window as any).fbq('track', 'Lead');
+                }
+              }
+            });
+          }
+        }}
+      />
+    </div>
   );
 }
 
@@ -108,7 +61,7 @@ export default function Home() {
                 <span>Early access to new tools, e-courses, and my upcoming book</span>
               </li>
             </ul>
-            <SignupForm id="hero-form" />
+            <KitForm id="hero-form" />
             <p className="form-note">Join 10,083+ families. Unsubscribe anytime. No spam, ever.</p>
           </div>
           <div className="hero-right">
@@ -222,7 +175,7 @@ export default function Home() {
         <div className="bottom-cta-inner">
           <h2>Your family deserves a system.<br />This one&apos;s free.</h2>
           <p>Drop your email. Get the dashboard. Start this week.</p>
-          <SignupForm id="bottom-form" dark />
+          <KitForm id="bottom-form" />
           <p className="form-note">No credit card. No spam. Just a really useful spreadsheet.</p>
         </div>
       </section>

@@ -1,558 +1,109 @@
-@import "tailwindcss";
+/* Kit form embed overrides — strip Kit's default chrome and match page design */
 
-/* ── Reset & Base ── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: #1a1a1a;
-            background: #faf9f6;
-            line-height: 1.6;
-        }
-        img { max-width: 100%; display: block; }
+/* Hide Kit's header, description, and privacy text since the page already has those */
+.kit-form-wrapper .formkit-header,
+.kit-form-wrapper .formkit-subheader,
+.kit-form-wrapper .formkit-guarantee,
+.kit-form-wrapper .formkit-powered-by-convertkit-container {
+  display: none !important;
+}
 
-        /* ── Hero Section ── */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 24px 56px;
-            background: linear-gradient(170deg, #faf9f6 0%, #ede9e0 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -100px;
-            right: -100px;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(52,168,133,0.07) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -80px;
-            left: -80px;
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, rgba(52,168,133,0.05) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-        .hero-inner {
-            max-width: 1100px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            align-items: center;
-        }
-        .hero-left { position: relative; z-index: 1; }
+/* Remove Kit's outer card/background */
+.kit-form-wrapper .formkit-background,
+.kit-form-wrapper [data-style="full"] {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-width: unset !important;
+  max-width: 100% !important;
+}
 
-        /* ── Badge ── */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #e8f5f0;
-            color: #1a7a5a;
-            font-size: 0.78rem;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 100px;
-            margin-bottom: 22px;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            border: 1px solid rgba(52,168,133,0.2);
-        }
-        .badge svg { flex-shrink: 0; }
+/* The inner form container */
+.kit-form-wrapper .formkit-form {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  max-width: 100% !important;
+}
 
-        /* ── Hero Headline ── */
-        .hero-headline {
-            font-size: clamp(1.9rem, 3.8vw, 2.75rem);
-            font-weight: 900;
-            line-height: 1.12;
-            color: #111;
-            margin-bottom: 18px;
-            letter-spacing: -0.035em;
-        }
-        .hero-headline .highlight {
-            color: #34a885;
-        }
+/* Fields row — make input and button sit side by side */
+.kit-form-wrapper .formkit-fields {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+  flex-wrap: nowrap !important;
+}
 
-        /* ── Bullet List ── */
-        .hero-bullets {
-            list-style: none;
-            margin-bottom: 32px;
-        }
-        .hero-bullets li {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            font-size: 1.05rem;
-            color: #333;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-        .hero-bullets li:last-child {
-            margin-bottom: 0;
-        }
-        .hero-bullets .bullet-icon {
-            flex-shrink: 0;
-            width: 22px;
-            height: 22px;
-            background: #34a885;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 2px;
-        }
-        .hero-bullets .bullet-icon svg {
-            display: block;
-        }
-        .hero-bullets .free-tag {
-            font-weight: 800;
-            font-size: 1.15rem;
-            color: #111;
-            background: #fff3cd;
-            padding: 1px 7px;
-            border-radius: 4px;
-            border: 1.5px solid #f0c040;
-            white-space: nowrap;
-        }
+/* Email input */
+.kit-form-wrapper .formkit-field,
+.kit-form-wrapper .formkit-input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: 52px !important;
+  padding: 0 18px !important;
+  border: 2px solid #e0e0e0 !important;
+  border-radius: 10px !important;
+  font-size: 16px !important;
+  font-family: inherit !important;
+  background: #fff !important;
+  color: #1a1a1a !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
 
-        /* ── Form ── */
-        .signup-form {
-            display: flex;
-            gap: 10px;
-            max-width: 480px;
-            margin-bottom: 12px;
-        }
-        .signup-form input[type="email"] {
-            flex: 1;
-            padding: 16px 18px;
-            font-size: 1rem;
-            font-family: inherit;
-            border: 2px solid #d4d0c8;
-            border-radius: 10px;
-            background: #fff;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .signup-form input[type="email"]:focus {
-            border-color: #34a885;
-            box-shadow: 0 0 0 3px rgba(52,168,133,0.12);
-        }
-        .signup-form input[type="email"]::placeholder {
-            color: #aaa;
-        }
-        .cta-btn {
-            padding: 16px 26px;
-            font-size: 1rem;
-            font-weight: 800;
-            font-family: inherit;
-            color: #fff;
-            background: #34a885;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-            letter-spacing: 0.01em;
-            box-shadow: 0 4px 14px rgba(52,168,133,0.35);
-        }
-        .cta-btn:hover {
-            background: #2b8f72;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(52,168,133,0.4);
-        }
-        .cta-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(52,168,133,0.3);
-        }
-        .cta-btn:disabled {
-            background: #aaa;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .form-note {
-            font-size: 0.8rem;
-            color: #999;
-            max-width: 480px;
-        }
+.kit-form-wrapper .formkit-input:focus {
+  border-color: #2db88a !important;
+}
 
-        /* ── Form Success / Error States ── */
-        .form-message {
-            display: none;
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            max-width: 480px;
-            margin-bottom: 12px;
-        }
-        .form-message.success {
-            background: #e8f5f0;
-            color: #1a7a5a;
-            border: 1px solid rgba(52,168,133,0.3);
-        }
-        .form-message.error {
-            background: #fde8e8;
-            color: #9a2a2a;
-            border: 1px solid rgba(200,50,50,0.2);
-        }
-        .form-message.visible {
-            display: block;
-        }
+/* Submit button */
+.kit-form-wrapper .formkit-submit {
+  flex: 0 0 auto !important;
+  height: 52px !important;
+  padding: 0 24px !important;
+  background: #2db88a !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  font-family: inherit !important;
+  border: none !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background 0.2s !important;
+}
 
-        /* ── Spreadsheet Preview ── */
-        .hero-right {
-            position: relative;
-            z-index: 1;
-        }
-        .spreadsheet-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 48px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.05);
-            overflow: hidden;
-            transform: rotate(1.5deg);
-            transition: transform 0.35s ease;
-        }
-        .spreadsheet-card:hover {
-            transform: rotate(0deg) scale(1.015);
-        }
-        .spreadsheet-bar {
-            background: #34a885;
-            padding: 12px 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .spreadsheet-bar .dots {
-            display: flex;
-            gap: 6px;
-        }
-        .spreadsheet-bar .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.35);
-        }
-        .spreadsheet-bar .title {
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+.kit-form-wrapper .formkit-submit:hover {
+  background: #24a07a !important;
+}
 
-        /* ── Spreadsheet Table Mockup ── */
-        .sheet-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.82rem;
-        }
-        .sheet-table th {
-            background: #f5f3ee;
-            padding: 9px 14px;
-            text-align: left;
-            font-weight: 700;
-            color: #666;
-            border-bottom: 2px solid #e8e5dd;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-        .sheet-table td {
-            padding: 8px 14px;
-            border-bottom: 1px solid #f0ede6;
-            color: #333;
-        }
-        .sheet-table tr:last-child td {
-            border-bottom: none;
-        }
-        .sheet-table .section-header td {
-            font-weight: 800;
-            color: #34a885;
-            background: #f9faf9;
-            padding: 7px 14px;
-            font-size: 0.72rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        .sheet-label {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.68rem;
-            font-weight: 700;
-        }
-        .label-red    { background: #fde8e8; color: #9a2a2a; }
-        .label-blue   { background: #e8f0fa; color: #2a5a9a; }
-        .label-orange { background: #fef3e5; color: #9a6a2a; }
-        .label-green  { background: #e8f5f0; color: #1a7a5a; }
+/* Success / confirmation message */
+.kit-form-wrapper .formkit-alert-success,
+.kit-form-wrapper .seva-confirmation-content {
+  background: #e8f8f2 !important;
+  border: 1px solid #2db88a !important;
+  color: #1a6b52 !important;
+  border-radius: 10px !important;
+  padding: 16px 20px !important;
+  font-size: 15px !important;
+  font-family: inherit !important;
+}
 
-        /* ── What's Inside Section ── */
-        .features {
-            padding: 88px 24px;
-            background: #fff;
-        }
-        .features-inner {
-            max-width: 1040px;
-            margin: 0 auto;
-        }
-        .section-label {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #34a885;
-            margin-bottom: 12px;
-        }
-        .features-title {
-            font-size: clamp(1.5rem, 3vw, 2.1rem);
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 10px;
-            letter-spacing: -0.025em;
-        }
-        .features-sub {
-            text-align: center;
-            color: #777;
-            font-size: 1rem;
-            margin-bottom: 52px;
-            max-width: 560px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+/* Bottom CTA section — make button full-width on the dark background */
+.bottom-cta .kit-form-wrapper .formkit-fields {
+  flex-direction: column !important;
+}
 
-        /* ── Category Sections ── */
-        .category {
-            margin-bottom: 44px;
-        }
-        .category:last-child {
-            margin-bottom: 0;
-        }
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0ede6;
-        }
-        .category-icon { font-size: 1.2rem; }
-        .category-name {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #aaa;
-        }
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-        .feature-card {
-            background: #faf9f6;
-            border-radius: 12px;
-            padding: 22px;
-            border: 1.5px solid #eee;
-            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-        }
-        .feature-card:hover {
-            border-color: #34a885;
-            box-shadow: 0 4px 20px rgba(52,168,133,0.1);
-            transform: translateY(-2px);
-        }
-        .feature-card h3 {
-            font-size: 0.93rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: #111;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .feature-card p {
-            font-size: 0.87rem;
-            color: #666;
-            line-height: 1.55;
-        }
+.bottom-cta .kit-form-wrapper .formkit-field,
+.bottom-cta .kit-form-wrapper .formkit-input {
+  width: 100% !important;
+  max-width: 480px !important;
+  margin: 0 auto !important;
+}
 
-        /* ── Tab Count Banner ── */
-        .tab-count {
-            text-align: center;
-            padding: 28px 24px;
-            background: #f5f3ee;
-            margin-top: 52px;
-            border-radius: 14px;
-            border: 1.5px solid #e8e5dd;
-        }
-        .tab-count .tc-number {
-            font-weight: 900;
-            color: #34a885;
-            font-size: 2rem;
-            letter-spacing: -0.03em;
-        }
-        .tab-count p {
-            color: #777;
-            font-size: 0.95rem;
-            margin-top: 4px;
-        }
-
-        /* ── Social Proof ── */
-        .proof {
-            padding: 72px 24px;
-            background: #faf9f6;
-        }
-        .proof-inner {
-            max-width: 860px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        .proof-stat {
-            font-size: clamp(2.8rem, 5vw, 4rem);
-            font-weight: 900;
-            color: #34a885;
-            letter-spacing: -0.04em;
-            line-height: 1;
-        }
-        .proof-label {
-            font-size: 1.1rem;
-            color: #777;
-            margin-bottom: 44px;
-            margin-top: 6px;
-        }
-        .testimonials {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            text-align: left;
-        }
-        .testimonial {
-            background: #fff;
-            border-radius: 14px;
-            padding: 26px;
-            border: 1.5px solid #eee;
-            transition: box-shadow 0.2s, transform 0.2s;
-        }
-        .testimonial:hover {
-            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-            transform: translateY(-2px);
-        }
-        .stars {
-            color: #f5a623;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-        .testimonial p {
-            font-size: 0.93rem;
-            color: #444;
-            line-height: 1.65;
-            margin-bottom: 14px;
-            font-style: italic;
-        }
-        .testimonial .author {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #aaa;
-        }
-
-        /* ── Bottom CTA ── */
-        .bottom-cta {
-            padding: 88px 24px;
-            background: #111;
-            text-align: center;
-        }
-        .bottom-cta-inner {
-            max-width: 560px;
-            margin: 0 auto;
-        }
-        .bottom-cta h2 {
-            font-size: clamp(1.6rem, 3vw, 2.2rem);
-            font-weight: 900;
-            color: #fff;
-            margin-bottom: 12px;
-            letter-spacing: -0.025em;
-            line-height: 1.2;
-        }
-        .bottom-cta > .bottom-cta-inner > p {
-            color: #999;
-            font-size: 1rem;
-            margin-bottom: 28px;
-        }
-        .bottom-cta .signup-form {
-            margin: 0 auto 14px;
-            justify-content: center;
-        }
-        .bottom-cta input[type="email"] {
-            border-color: #2a2a2a;
-            background: #1a1a1a;
-            color: #fff;
-        }
-        .bottom-cta input[type="email"]::placeholder {
-            color: #555;
-        }
-        .bottom-cta input[type="email"]:focus {
-            border-color: #34a885;
-            box-shadow: 0 0 0 3px rgba(52,168,133,0.15);
-        }
-        .bottom-cta .form-note {
-            color: #555;
-            text-align: center;
-            margin: 0 auto;
-        }
-        .bottom-cta .form-message {
-            margin: 0 auto 12px;
-        }
-        .bottom-cta .form-message.success {
-            background: rgba(52,168,133,0.15);
-            color: #6ecfb0;
-            border-color: rgba(52,168,133,0.3);
-        }
-        .bottom-cta .form-message.error {
-            background: rgba(200,50,50,0.15);
-            color: #f08080;
-            border-color: rgba(200,50,50,0.3);
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 860px) {
-            .testimonials {
-                grid-template-columns: 1fr;
-            }
-        }
-        @media (max-width: 768px) {
-            .hero-inner {
-                grid-template-columns: 1fr;
-                gap: 44px;
-            }
-            .hero-left { order: 1; }
-            .hero-right { order: 2; }
-            .signup-form {
-                flex-direction: column;
-            }
-            .cta-btn {
-                text-align: center;
-                width: 100%;
-            }
-            .category-grid {
-                grid-template-columns: 1fr;
-            }
-            .spreadsheet-card {
-                transform: none;
-            }
-            .hero {
-                min-height: auto;
-                padding: 60px 20px 48px;
-            }
-        }
+.bottom-cta .kit-form-wrapper .formkit-submit {
+  width: 100% !important;
+  max-width: 480px !important;
+  margin: 0 auto !important;
+}
