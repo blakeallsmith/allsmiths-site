@@ -1,46 +1,38 @@
-/* Kit form embed overrides — strip Kit's default chrome and match page design */
+/* Kit form embed overrides — match page design, hide Kit chrome */
 
-/* Hide Kit's header, description, and privacy text since the page already has those */
-.kit-form-wrapper .formkit-header,
-.kit-form-wrapper .formkit-subheader,
-.kit-form-wrapper .formkit-guarantee,
-.kit-form-wrapper .formkit-powered-by-convertkit-container {
+/* Hide Kit's "Built with Kit" footer link */
+.formkit-form[data-uid="228219bc9e"] .formkit-powered-by-convertkit-container {
   display: none !important;
 }
 
-/* Remove Kit's outer card/background */
-.kit-form-wrapper .formkit-background,
-.kit-form-wrapper [data-style="full"] {
-  background: transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  min-width: unset !important;
-  max-width: 100% !important;
-}
-
-/* The inner form container */
-.kit-form-wrapper .formkit-form {
+/* Remove outer background/padding from the form wrapper */
+.formkit-form[data-uid="228219bc9e"] {
   background: transparent !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
   box-shadow: none !important;
   max-width: 100% !important;
+  min-width: unset !important;
 }
 
-/* Fields row — make input and button sit side by side */
-.kit-form-wrapper .formkit-fields {
+/* Fields row — input and button side by side */
+.formkit-form[data-uid="228219bc9e"] .seva-fields.formkit-fields {
   display: flex !important;
   gap: 8px !important;
   align-items: stretch !important;
   flex-wrap: nowrap !important;
+  margin-bottom: 0 !important;
 }
 
 /* Email input */
-.kit-form-wrapper .formkit-field,
-.kit-form-wrapper .formkit-input {
+.formkit-form[data-uid="228219bc9e"] .formkit-field {
   flex: 1 1 auto !important;
   min-width: 0 !important;
+}
+
+.formkit-form[data-uid="228219bc9e"] .formkit-input {
+  width: 100% !important;
   height: 52px !important;
   padding: 0 18px !important;
   border: 2px solid #e0e0e0 !important;
@@ -51,14 +43,16 @@
   color: #1a1a1a !important;
   outline: none !important;
   box-shadow: none !important;
+  margin: 0 !important;
+  line-height: 52px !important;
 }
 
-.kit-form-wrapper .formkit-input:focus {
+.formkit-form[data-uid="228219bc9e"] .formkit-input:focus {
   border-color: #2db88a !important;
 }
 
 /* Submit button */
-.kit-form-wrapper .formkit-submit {
+.formkit-form[data-uid="228219bc9e"] .formkit-submit {
   flex: 0 0 auto !important;
   height: 52px !important;
   padding: 0 24px !important;
@@ -71,16 +65,21 @@
   border-radius: 10px !important;
   cursor: pointer !important;
   white-space: nowrap !important;
+  margin-bottom: 0 !important;
   transition: background 0.2s !important;
 }
 
-.kit-form-wrapper .formkit-submit:hover {
+.formkit-form[data-uid="228219bc9e"] .formkit-submit:hover {
   background: #24a07a !important;
 }
 
-/* Success / confirmation message */
-.kit-form-wrapper .formkit-alert-success,
-.kit-form-wrapper .seva-confirmation-content {
+.formkit-form[data-uid="228219bc9e"] .formkit-submit > span {
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* Success message */
+.formkit-form[data-uid="228219bc9e"] .formkit-alert-success {
   background: #e8f8f2 !important;
   border: 1px solid #2db88a !important;
   color: #1a6b52 !important;
@@ -88,22 +87,5 @@
   padding: 16px 20px !important;
   font-size: 15px !important;
   font-family: inherit !important;
-}
-
-/* Bottom CTA section — make button full-width on the dark background */
-.bottom-cta .kit-form-wrapper .formkit-fields {
-  flex-direction: column !important;
-}
-
-.bottom-cta .kit-form-wrapper .formkit-field,
-.bottom-cta .kit-form-wrapper .formkit-input {
-  width: 100% !important;
-  max-width: 480px !important;
-  margin: 0 auto !important;
-}
-
-.bottom-cta .kit-form-wrapper .formkit-submit {
-  width: 100% !important;
-  max-width: 480px !important;
-  margin: 0 auto !important;
+  margin-top: 12px !important;
 }
