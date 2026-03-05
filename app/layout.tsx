@@ -47,6 +47,11 @@ export default function RootLayout({
             alt=""
           />
         </noscript>
+        {/* Kit Embed Script */}
+        <Script
+          src="https://f.convertkit.com/ckjs/ck.5.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body className={`${inter.variable} antialiased`}>
         {children}

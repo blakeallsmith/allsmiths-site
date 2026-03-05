@@ -1,71 +1,49 @@
 'use client';
 
-import { useState, useRef, FormEvent } from 'react';
+import { useEffect } from 'react';
 
-function SignupForm({ id }: { id: string }) {
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-  const emailRef = useRef<HTMLInputElement>(null);
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const email = emailRef.current?.value.trim();
-    if (!email) return;
-
-    setStatus('loading');
-    setMessage('');
-
-    try {
-      const res = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, referrer: window.location.href }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Something went wrong. Please try again.');
-      }
-
-      // Fire Meta Pixel Lead event
+function KitForm() {
+  useEffect(() => {
+    // Listen for Kit's custom success event to fire the Meta Pixel Lead event
+    const handleKitSuccess = () => {
       if (typeof (window as any).fbq === 'function') {
         (window as any).fbq('track', 'Lead');
       }
-
-      setStatus('success');
-      setMessage("You're in! Check your email to get your dashboard.");
-    } catch (err: any) {
-      setStatus('error');
-      setMessage(err.message || 'Something went wrong. Please try again.');
-    }
-  }
-
-  if (status === 'success') {
-    return (
-      <div className="form-success">
-        {message}
-      </div>
-    );
-  }
+    };
+    document.addEventListener('kit:subscribe', handleKitSuccess);
+    return () => document.removeEventListener('kit:subscribe', handleKitSuccess);
+  }, []);
 
   return (
-    <div>
-      {status === 'error' && (
-        <div className="form-error">{message}</div>
-      )}
-      <form className="signup-form" id={id} onSubmit={handleSubmit}>
-        <input
-          type="email"
-          ref={emailRef}
-          placeholder="Enter your email"
-          required
-          disabled={status === 'loading'}
-        />
-        <button type="submit" className="cta-btn" disabled={status === 'loading'}>
-          {status === 'loading' ? 'Sending...' : 'Get the Free Dashboard \u2192'}
-        </button>
-      </form>
-    </div>
+    <form
+      action="https://app.kit.com/forms/9162242/subscriptions"
+      className="seva-form formkit-form kit-embed-form"
+      method="post"
+      data-sv-form="9162242"
+      data-uid="228219bc9e"
+      data-format="inline"
+      data-version="5"
+    >
+      <div data-style="clean">
+        <ul className="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul>
+        <div data-element="fields" data-stacked="false" className="seva-fields formkit-fields">
+          <div className="formkit-field">
+            <input
+              className="formkit-input kit-email-input"
+              name="email_address"
+              aria-label="Email Address"
+              placeholder="Enter your email"
+              required
+              type="email"
+            />
+          </div>
+          <button data-element="submit" className="formkit-submit kit-submit-btn">
+            <div className="formkit-spinner"><div></div><div></div><div></div></div>
+            <span>Get the Free Dashboard &rarr;</span>
+          </button>
+        </div>
+      </div>
+    </form>
   );
 }
 
@@ -103,7 +81,7 @@ export default function Home() {
                 <span>Early access to new tools, e-courses, and my upcoming book</span>
               </li>
             </ul>
-            <SignupForm id="hero-form" />
+            <KitForm />
             <p className="form-note">Join 10,083+ families. Unsubscribe anytime. No spam, ever.</p>
           </div>
           <div className="hero-right">
@@ -217,7 +195,7 @@ export default function Home() {
         <div className="bottom-cta-inner">
           <h2>Your family deserves a system.<br />This one&apos;s free.</h2>
           <p>Drop your email. Get the dashboard. Start this week.</p>
-          <SignupForm id="bottom-form" />
+          <KitForm />
           <p className="form-note">No credit card. No spam. Just a really useful spreadsheet.</p>
         </div>
       </section>
