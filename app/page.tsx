@@ -4,14 +4,75 @@ import { useEffect } from 'react';
 
 function KitForm() {
   useEffect(() => {
-    // Listen for Kit's custom success event to fire the Meta Pixel Lead event
+    let pixelFired = false;
+
+    // Method 1: Listen for Kit's custom event (works in some configurations)
     const handleKitSuccess = () => {
-      if (typeof (window as any).fbq === 'function') {
+      if (!pixelFired && typeof (window as any).fbq === 'function') {
+        pixelFired = true;
         (window as any).fbq('track', 'Lead');
       }
     };
     document.addEventListener('kit:subscribe', handleKitSuccess);
-    return () => document.removeEventListener('kit:subscribe', handleKitSuccess);
+
+    // Method 2: MutationObserver watching for Kit's success message appearing in the DOM
+    // Kit replaces the form fields with a success message div when submission succeeds
+    const observer = new MutationObserver(() => {
+      const successEl = document.querySelector('[data-element="success"]');
+      const thankYouEl = document.querySelector('.formkit-alert-success');
+      const formkitSuccess = document.querySelector('[data-sv-form] [data-element="content"]');
+      // Also watch for the form switching to showing success content
+      const allForms = document.querySelectorAll('[data-sv-form]');
+      allForms.forEach(form => {
+        const style = window.getComputedStyle(form);
+        // Kit hides the fields and shows success — check if fields are hidden
+        const fields = form.querySelector('[data-element="fields"]') as HTMLElement;
+        if (fields && fields.style.display === 'none' && !pixelFired) {
+          if (typeof (window as any).fbq === 'function') {
+            pixelFired = true;
+            (window as any).fbq('track', 'Lead');
+          }
+        }
+      });
+      if ((successEl || thankYouEl) && !pixelFired) {
+        if (typeof (window as any).fbq === 'function') {
+          pixelFired = true;
+          (window as any).fbq('track', 'Lead');
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+
+    // Method 3: Intercept the form submit and watch for the XHR/fetch response
+    // Kit's ck.5.js intercepts the form submit and does an XHR — we watch for the
+    // fields to be replaced with a success state
+    const handleFormSubmit = (e: Event) => {
+      const form = (e.target as HTMLElement).closest('[data-sv-form]');
+      if (!form) return;
+      // Poll for success state after submit
+      let attempts = 0;
+      const poll = setInterval(() => {
+        attempts++;
+        const fields = form.querySelector('[data-element="fields"]') as HTMLElement;
+        const submitted = form.getAttribute('data-sv-submitted');
+        // Check if Kit has hidden the fields (success state)
+        if ((fields && fields.style.display === 'none') || submitted === 'true') {
+          clearInterval(poll);
+          if (!pixelFired && typeof (window as any).fbq === 'function') {
+            pixelFired = true;
+            (window as any).fbq('track', 'Lead');
+          }
+        }
+        if (attempts > 20) clearInterval(poll); // Stop after 10 seconds
+      }, 500);
+    };
+    document.addEventListener('submit', handleFormSubmit, true);
+
+    return () => {
+      document.removeEventListener('kit:subscribe', handleKitSuccess);
+      document.removeEventListener('submit', handleFormSubmit, true);
+      observer.disconnect();
+    };
   }, []);
 
   return (
