@@ -6,12 +6,23 @@ function KitForm() {
   useEffect(() => {
     let pixelFired = false;
 
+    // Redirect to thank-you / tripwire page after successful signup
+    let redirected = false;
+    const redirectToThankYou = () => {
+      if (redirected) return;
+      redirected = true;
+      setTimeout(() => {
+        window.location.href = '/thank-you';
+      }, 300); // Small delay to let the pixel request fire
+    };
+
     // Method 1: Listen for Kit's custom event (works in some configurations)
     const handleKitSuccess = () => {
       if (!pixelFired && typeof (window as any).fbq === 'function') {
         pixelFired = true;
         (window as any).fbq('track', 'Lead');
       }
+      redirectToThankYou();
     };
     document.addEventListener('kit:subscribe', handleKitSuccess);
 
@@ -32,6 +43,7 @@ function KitForm() {
             pixelFired = true;
             (window as any).fbq('track', 'Lead');
           }
+          redirectToThankYou();
         }
       });
       if ((successEl || thankYouEl) && !pixelFired) {
@@ -39,6 +51,7 @@ function KitForm() {
           pixelFired = true;
           (window as any).fbq('track', 'Lead');
         }
+        redirectToThankYou();
       }
     });
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
@@ -62,6 +75,7 @@ function KitForm() {
             pixelFired = true;
             (window as any).fbq('track', 'Lead');
           }
+          redirectToThankYou();
         }
         if (attempts > 20) clearInterval(poll); // Stop after 10 seconds
       }, 500);
